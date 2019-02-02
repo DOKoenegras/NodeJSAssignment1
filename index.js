@@ -9,6 +9,7 @@ const https = require('https');
 const url = require('url');
 const StringDecoder = require('string_decoder').StringDecoder;
 const fs = require('fs');
+const path = require('path');
 
 const config = require('./config')
 
@@ -22,9 +23,12 @@ httpServer.listen(config.httpPort, function() {
 });
 
 // Instantiate HTTPS server
+const key = path.join(__dirname, 'https/key.pem');
+const cert = path.join(__dirname, 'https/cert.pem');
+
 const httpsServerOptions = {
-	'key': fs.readFileSync('./https/key.pem'),
-	'cert': fs.readFileSync('./https/cert.pem')
+	'key': fs.readFileSync(key),
+	'cert': fs.readFileSync(cert)
 };
 
 const httpsServer = https.createServer(httpsServerOptions, function(req, res) {
@@ -36,7 +40,7 @@ httpsServer.listen(config.httpsPort, function() {
 });
 
 var unifiedServer = function(req, res) {	
-	/// Parse requested url
+	// Parse requested url
 	let parsedUrl = url.parse(req.url, true); 
 	
 	// Get path
